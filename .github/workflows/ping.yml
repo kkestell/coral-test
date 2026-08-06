@@ -1,11 +1,16 @@
 name: Ping
 on:
   workflow_dispatch:
-  push:
-  issue_comment:
-    types: [created]
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - run: echo hello
+      - id: setup
+        uses: kkestell/coral/actions/setup@main
+      - run: |
+          set -euo pipefail
+          "$CORAL_BIN/coral" --help
+          "$CORAL_BIN/coral" resolve || echo "resolve exited $?"
+        env:
+          CORAL_BIN: ${{ steps.setup.outputs.bin }}
+          GITHUB_TOKEN: ${{ github.token }}
