@@ -1,0 +1,9 @@
+name: Ping
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hello
