@@ -1,0 +1,108 @@
+name: Secret exposure probe 2
+
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hold an env canary, leave a sibling process holding it, then exit
+        env:
+          ENV_CANARY: ${{ secrets.PROBE_ENV_CANARY }}
+        run: |
+          set -euo pipefail
+          setsid env SIBLING_CANARY="$ENV_CANARY" sleep 900 </dev/null >/dev/null 2>&1 &
+          sleep 1
+          echo "sibling started"
+
+      - name: Reference the memory canary without putting it in any environment
+        env:
+          MEM_CANARY_IS_SET: ${{ secrets.PROBE_MEM_CANARY != '' }}
+        run: echo "the memory canary is referenced by this workflow ($MEM_CANARY_IS_SET)"
+
+      - name: Probe
+        run: |
+          set -uo pipefail
+          WORKER=$(pgrep -f 'Runner.Worker' | head -1)
+          echo "worker pid: ${WORKER:-none}"
+          sudo WORKER="${WORKER:-0}" python3 - <<'PY'
+          import json
+          import os
+          import re
+
+          # Every needle is joined at run time. The literal joined form never appears in this
+          # script, so it cannot appear in the worker's copy of this script and confound a match.
+          base = b"coral" + b"probe-"
+          needles = {
+              "env canary": base + b"env-",
+              "memory canary": base + b"mem-",
+              "unreferenced canary": base + b"unref-",
+          }
+
+          print("=== files under the runner's home and the temp directories ===")
+          roots = ["/home/runner/work", "/home/runner/runners", "/tmp", "/var/tmp"]
+          for name, needle in needles.items():
+              found = []
+              for root in roots:
+                  for directory, _, files in os.walk(root, onerror=lambda error: None):
+                      for entry in files:
+                          path = os.path.join(directory, entry)
+                          try:
+                              if os.path.getsize(path) > 20 * 1024 * 1024:
+                                  continue
+                              with open(path, "rb") as handle:
+                                  if needle in handle.read():
+                                      found.append(path)
+                          except OSError:
+                              continue
+              print(f"{name} appears in: {found or 'no file'}")
+
+          print("=== Runner.Worker memory ===")
+          pid = os.environ["WORKER"]
+          regions = []
+          with open(f"/proc/{pid}/maps") as handle:
+              for line in handle:
+                  fields = line.split()
+                  if not fields[1].startswith("r"):
+                      continue
+                  low, high = (int(part, 16) for part in fields[0].split("-"))
+                  if high - low <= 512 * 1024 * 1024:
+                      regions.append((low, high))
+          counts = {name: 0 for name in needles}
+          secrets_found = []
+          pattern = re.compile(rb'\{"value":"(.{1,200}?)","isSecret":true\}')
+          scanned = 0
+          with open(f"/proc/{pid}/mem", "rb", 0) as mem:
+              for low, high in regions:
+                  try:
+                      mem.seek(low)
+                      chunk = mem.read(high - low)
+                  except (OSError, ValueError, OverflowError):
+                      continue
+                  scanned += len(chunk)
+                  for name, needle in needles.items():
+                      counts[name] += chunk.count(needle)
+                  for match in pattern.finditer(chunk):
+                      secrets_found.append(match.group(1))
+          print("bytes scanned:", scanned)
+          for name, count in counts.items():
+              print(f"{name} occurrences in worker memory: {count}")
+
+          print("=== secret-store entries recovered from worker memory ===")
+          seen = set()
+          for raw in secrets_found:
+              try:
+                  value = json.loads(b'"' + raw + b'"')
+              except ValueError:
+                  continue
+              if value in seen:
+                  continue
+              seen.add(value)
+              encoded = value.encode()
+              which = [name for name, needle in needles.items() if encoded.startswith(needle)]
+              print(f"length {len(value)}, canary: {which or 'not one of the canaries'}")
+          print("distinct secret values recovered:", len(seen))
+          PY
