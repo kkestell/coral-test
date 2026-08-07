@@ -28,6 +28,6 @@ jobs:
       pull-requests: write
     uses: kkestell/coral/.github/workflows/coral.yml@main
     with:
-      time_budget_minutes: 355
+      model: openai/gpt-5.6-nebula
     secrets:
       openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
