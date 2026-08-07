@@ -21,7 +21,7 @@ jobs:
       - name: Reference the memory canary without putting it in any environment
         env:
           MEM_CANARY_IS_SET: ${{ secrets.PROBE_MEM_CANARY != '' }}
-        run: echo "the memory canary is referenced by this workflow: $MEM_CANARY_IS_SET"
+        run: echo "the memory canary is referenced by this workflow ($MEM_CANARY_IS_SET)"
 
       - name: Probe
         run: |
