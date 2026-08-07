@@ -1,4 +1,6 @@
-"""A few shapes, for Coral to have something to look at."""
+"""Area helpers, with the docstring rewritten so line 1 moves under Coral's finding."""
+
+import math
 
 
 def rectangle_area(width, height):
@@ -10,4 +12,4 @@ def triangle_area(base, height):
 
 
 def circle_area(radius):
-    return 3.14159 * radius * radius
+    return math.pi * radius * radius
