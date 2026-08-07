@@ -28,7 +28,7 @@ jobs:
       pull-requests: write
     uses: kkestell/coral/.github/workflows/coral.yml@main
     with:
-      model: deepseek/deepseek-chat-v3.1
+      model: ~openai/gpt-mini-latest
       reasoning_effort: low
       time_budget_minutes: 10
     secrets:
