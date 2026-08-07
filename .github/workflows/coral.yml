@@ -28,5 +28,4 @@ jobs:
       pull-requests: write
     uses: kkestell/coral/.github/workflows/coral.yml@main
     secrets:
-      openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
       openrouter_management_key: ${{ secrets.OPENROUTER_MANAGEMENT_KEY }}
