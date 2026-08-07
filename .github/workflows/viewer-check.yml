@@ -1,0 +1,30 @@
+name: Viewer check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  viewer:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api graphql -f query='
+            query {
+              viewer { login }
+              repository(owner: "kkestell", name: "coral-test") {
+                pullRequest(number: 24) {
+                  reviews(last: 20) {
+                    nodes { author { login } viewerDidAuthor body }
+                  }
+                }
+              }
+            }
+          ' > answer.json
+          echo "viewer: $(jq -r .data.viewer.login answer.json)"
+          jq -r '.data.repository.pullRequest.reviews.nodes[]
+            | "author=\(.author.login) viewerDidAuthor=\(.viewerDidAuthor) body=\(.body[0:60])"' answer.json
