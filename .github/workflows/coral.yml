@@ -28,8 +28,6 @@ jobs:
       pull-requests: write
     uses: kkestell/coral/.github/workflows/coral.yml@main
     with:
-      model: ~openai/gpt-mini-latest
-      reasoning_effort: low
-      time_budget_minutes: 10
+      time_budget_minutes: 355
     secrets:
       openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
