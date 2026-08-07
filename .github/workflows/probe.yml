@@ -19,8 +19,9 @@ jobs:
           echo "sibling started"
 
       - name: Reference the memory canary without putting it in any environment
-        if: ${{ secrets.PROBE_MEM_CANARY != '' }}
-        run: echo "the memory canary is referenced by this workflow"
+        env:
+          MEM_CANARY_IS_SET: ${{ secrets.PROBE_MEM_CANARY != '' }}
+        run: echo "the memory canary is referenced by this workflow: $MEM_CANARY_IS_SET"
 
       - name: Probe
         run: |
