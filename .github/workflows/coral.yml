@@ -30,4 +30,4 @@ jobs:
     with:
       spend_cap_dollars: "0.0005"
     secrets:
-      openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
+      openrouter_management_key: ${{ secrets.OPENROUTER_MANAGEMENT_KEY }}
