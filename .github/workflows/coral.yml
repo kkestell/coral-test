@@ -27,5 +27,9 @@ jobs:
       issues: write
       pull-requests: write
     uses: kkestell/coral/.github/workflows/coral.yml@main
+    with:
+      model: deepseek/deepseek-chat-v3.1
+      reasoning_effort: low
+      time_budget_minutes: 10
     secrets:
       openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
