@@ -27,7 +27,5 @@ jobs:
       issues: write
       pull-requests: write
     uses: kkestell/coral/.github/workflows/coral.yml@main
-    with:
-      spend_cap_dollars: "0.0005"
     secrets:
       openrouter_management_key: ${{ secrets.OPENROUTER_MANAGEMENT_KEY }}
