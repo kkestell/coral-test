@@ -26,6 +26,6 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
-    uses: kkestell/coral/.github/workflows/coral.yml@main
+    uses: kkestell/coral/.github/workflows/coral.yml@forged-marker-attribution
     secrets:
       openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
