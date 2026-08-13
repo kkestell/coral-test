@@ -35,8 +35,9 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
-    # A tag rather than `main`, so this repository runs the Coral you installed rather than
-    # whatever lands on Coral's default branch afterwards. Bump it to take a newer Coral.
+    # `main` rather than a tag, unlike the example this file came from. This repository is
+    # where Coral's own changes are checked live, so it has to run whatever is on Coral's
+    # default branch rather than the last release.
     uses: kkestell/coral/.github/workflows/coral.yml@main
     # Coral's defaults, spelled out. Uncomment a line to change one; the whole block can go.
     # with:
