@@ -40,19 +40,16 @@ jobs:
     # default branch rather than the last release.
     uses: kkestell/coral/.github/workflows/coral.yml@main
     # Coral's defaults, spelled out. Uncomment a line to change one; the whole block can go.
-    with:
+    # with:
     #   # Any OpenRouter model, named exactly as https://openrouter.ai/models has it. A `~` alias
     #   # is refused, so the model a review ran on is always knowable from this file.
     #   model: openai/gpt-5.6-luna
     #   # Passed to the provider in OpenRouter's reasoning block. Empty sends no block, leaving the
     #   # provider its own default; what a value may be is the provider's rule, not Coral's.
     #   reasoning_effort: ""
-      # Your guidance for both agents: which tests to run and how, and what not to try to
-      # verify. Followed as instruction, because only this file can set it.
-      instructions: |
-        Run the Python fixture's tests with `python3 -m unittest` from `python-fixture`.
-        Begin the review's summary with the exact words "Owner guidance applied."
-        Begin the reason for every verdict you give with the exact words "Owner guidance applied."
+    #   # Your guidance for both agents: which tests to run and how, and what not to try to
+    #   # verify. Followed as instruction, because only this file can set it.
+    #   instructions: ""
     #   # How long the review gets. The job's own timeout is ten minutes more than this.
     #   time_budget_minutes: 20
     #   # What one review may spend. A review that reaches this stops and says so, and a minted
