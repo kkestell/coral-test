@@ -39,6 +39,10 @@ jobs:
     # where Coral's own changes are checked live, so it has to run whatever is on Coral's
     # default branch rather than the last release.
     uses: kkestell/coral/.github/workflows/coral.yml@main
+    with:
+      model: deepseek/deepseek-v4.1-flash-1017
+      reasoning_effort: high
+      time_budget_minutes: 1
     # Coral's defaults, spelled out. Uncomment a line to change one; the whole block can go.
     # with:
     #   # Any OpenRouter model, named exactly as https://openrouter.ai/models has it. A `~` alias
