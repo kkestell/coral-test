@@ -42,7 +42,10 @@ jobs:
     with:
       model: deepseek/deepseek-v4.1-flash-1017
       reasoning_effort: high
-      time_budget_minutes: 1
+      time_budget_minutes: 5
+      instructions: >-
+        Begin by replying with a plain-text summary of the change and no tool call. Do not call
+        any tool in your first reply.
     # Coral's defaults, spelled out. Uncomment a line to change one; the whole block can go.
     # with:
     #   # Any OpenRouter model, named exactly as https://openrouter.ai/models has it. A `~` alias
